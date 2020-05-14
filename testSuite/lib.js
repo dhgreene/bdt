@@ -264,7 +264,7 @@ class BulkDataClient
         this.statusResponse  = null;
         this.cancelRequest   = null;
         this.cancelResponse  = null;
-        this.accessToken     = null;
+        this.accessToken     = process.env.TOKEN;
     }
 
     /**
