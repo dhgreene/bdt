@@ -1,7 +1,7 @@
 const { BulkDataClient } = require("./lib");
 
 const exportTypes = [
-    {
+    /*{
         idPrefix   : "Patient-level",
         name       : "Patient-level export",
         mountPoint : "patientExportEndpoint"
@@ -10,7 +10,7 @@ const exportTypes = [
         idPrefix   : "System-level",
         name       : "System-level export",
         mountPoint : "systemExportEndpoint"
-    },
+    },*/
     {
         idPrefix   : "Group-level",
         name       : "Group-level export",
