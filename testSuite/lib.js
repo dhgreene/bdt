@@ -97,7 +97,7 @@ function customRequest(options)
 /**
  * Simple utility for waiting. Returns a promise that will resolve after @ms
  * milliseconds.
- * @param {Number} ms 
+ * @param {Number} ms
  */
 function wait(ms)
 {
@@ -184,11 +184,11 @@ function expectOperationOutcome(response, message = "")
     else if (response.headers["content-type"].startsWith("application/json")) {
         let body;
         if (typeof response.body == "string") {
-            try {    
+            try {
                 body = JSON.parse(response.body);
             } catch (ex) {
                 throw new Error(
-                    message + "Expected the request to return an " + 
+                    message + "Expected the request to return an " +
                     "OperationOutcome but the response body cannot be parsed as JSON."
                 );
             }
@@ -207,7 +207,7 @@ function expectOperationOutcome(response, message = "")
 /**
  * Creates an authentication token
  */
-function createClientAssertion(clientId, tokenEndpoint, keyId, privateKey )
+function createValidClientAssertion(clientId, tokenEndpoint, keyId, privateKey )
 {
     var dt = new Date().getTime();
     var uuid = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
@@ -335,7 +335,7 @@ class BulkDataClient
     }
 
     /**
-     * This is an async getter for the access token. 
+     * This is an async getter for the access token.
      * @param {Object} options
      * @param {Boolean} options.force Set to true to make the client re-authorize,
      * even if it currently has an access token
@@ -460,7 +460,7 @@ class BulkDataClient
      * @param {Number} index The index of the file in the status list
      * @param {Boolean} skipAuth If true, the authorization header will NOT be
      * included, even if the `requiresAuth` property of the server settings is
-     * true. 
+     * true.
      */
     async downloadFileAt(index, skipAuth = null) {
         await this.kickOff();
@@ -481,7 +481,7 @@ class BulkDataClient
      * @param {Number} index The index of the file in the status list
      * @param {Boolean} skipAuth If true, the authorization header will NOT be
      * included, even if the `requiresAuth` property of the server settings is
-     * true. 
+     * true.
      */
     async downloadFile(fileUrl, skipAuth = null) {
         const req = await this.request({
@@ -552,7 +552,7 @@ class BulkDataClient
             this.kickOffResponse.statusCode,
             "The kick-off request was expected to fail"
         ).to.be.above(399);
-        
+
         // Some servers return empty status message (regardless of the status code).
         // This is odd, but we allow it here as it is not critical
         if (this.kickOffResponse.statusMessage) {
