@@ -1,5 +1,5 @@
 const request  = require("request");
-const crypto   = require("crypto");
+const jsrsasign = require('jsrsasign')
 const jwt      = require("jsonwebtoken");
 const jwkToPem = require("jwk-to-pem");
 const expect   = require("code").expect;
@@ -206,30 +206,33 @@ function expectOperationOutcome(response, message = "")
 
 /**
  * Creates an authentication token
- * @param {Object} claims 
- * @param {Object} signOptions 
- * @param {Object} privateKey 
  */
-function createClientAssertion(claims = {}, signOptions = {}, privateKey)
+function createClientAssertion(clientId, tokenEndpoint, keyId, privateKey )
 {
-    let jwtToken = {
-        exp: Date.now() / 1000 + 300, // 5 min
-        jti: crypto.randomBytes(32).toString("hex"),
-        ...claims
+    var dt = new Date().getTime();
+    var uuid = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+        var r = (dt + Math.random()*16)%16 | 0;
+        dt = Math.floor(dt/16);
+        return (c=='x' ? r :(r&0x3|0x8)).toString(16);
+    });
+
+    var data = {
+        "iss": clientId,
+        "sub": clientId,
+        "aud": tokenEndpoint,
+        "exp": Math.round(new Date().getTime() / 1000) + 300,
+        "iat": Math.round(Date.now()),
+        "jti": uuid,
     };
 
-    const _signOptions = {
-        algorithm: privateKey.alg,
-        keyid: privateKey.kid,
-        ...signOptions,
-        header: {
-            // jku: jwks_url || undefined,
-            kty: privateKey.kty,
-            ...signOptions.header
-        }
-    };
 
-    return jwt.sign(jwtToken, jwkToPem(privateKey, { private: true }), _signOptions);
+const header = {
+        'alg': 'RS384',
+        'kid': keyId,
+    }
+    var sPayload = JSON.stringify(data);
+    var sJWT = jsrsasign.jws.JWS.sign("RS384", header, sPayload, privateKey);
+    return sJWT;
 }
 
 function authenticate(tokenUrl, postBody) {
@@ -264,7 +267,8 @@ class BulkDataClient
         this.statusResponse  = null;
         this.cancelRequest   = null;
         this.cancelResponse  = null;
-        this.accessToken     = process.env.TOKEN;
+        this.accessToken     = null;
+
     }
 
     /**
@@ -308,14 +312,10 @@ class BulkDataClient
             json     : true,
             strictSSL: !!this.options.strictSSL,
             form     : {
-                scope                : scope || "system/*.read",
+                scope                : scope || "system/*.*",
                 grant_type           : "client_credentials",
                 client_assertion_type: "urn:ietf:params:oauth:client-assertion-type:jwt-bearer",
-                client_assertion     : createClientAssertion({
-                    aud: this.options.tokenEndpoint,
-                    iss: this.options.clientId,
-                    sub: this.options.clientId
-                }, {}, this.options.privateKey)
+                client_assertion     : createValidClientAssertion(this.options.clientId, this.options.tokenEndpoint, this.options.keyid, this.options.privateKey)
             }
         });
 
@@ -589,13 +589,12 @@ class BulkDataClient
 
 module.exports = {
     request: customRequest,
-    createClientAssertion,
+    createValidClientAssertion,
     expectOperationOutcome,
     expectStatusCode,
     expectUnauthorized,
     expectJson,
     wait,
     BulkDataClient,
-    createJWKS,
     authenticate
 };

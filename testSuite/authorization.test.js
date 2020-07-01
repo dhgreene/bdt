@@ -24,7 +24,7 @@ const WRONG_ACCESS_TOKEN = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzY29wZSI6" +
 
 module.exports = function(describe, it) {
     describe("Authorization", () => {
-        
+
         // A few tests that are the same for each of the kick-off endpoints
         [
             { prop: "systemExportEndpoint" , name: "system-level export" },
@@ -211,7 +211,7 @@ module.exports = function(describe, it) {
                     form     : {
                         scope                : "system/*.read",
                         client_assertion_type: "urn:ietf:params:oauth:client-assertion-type:jwt-bearer",
-                        client_assertion     : createClientAssertion({}, {}, cfg.privateKey)
+                        client_assertion     : createClientAssertion(cfg.clientId, cfg.tokenEndpoint, cfg.keyid, cfg.privateKey)
                     }
                 });
 
@@ -243,7 +243,7 @@ module.exports = function(describe, it) {
                         scope                : "system/*.read",
                         grant_type           : "test-grant_type-value",
                         client_assertion_type: "urn:ietf:params:oauth:client-assertion-type:jwt-bearer",
-                        client_assertion     : createClientAssertion({}, {}, cfg.privateKey)
+                        client_assertion     : createClientAssertion(cfg.clientId, cfg.tokenEndpoint, cfg.keyid, cfg.privateKey)
                     }
                 });
 
@@ -274,7 +274,7 @@ module.exports = function(describe, it) {
                     form: {
                         scope           : "system/*.read",
                         grant_type      : "client_credentials",
-                        client_assertion: createClientAssertion({}, {}, cfg.privateKey)
+                        client_assertion: createClientAssertion(cfg.clientId, cfg.tokenEndpoint, cfg.keyid, cfg.privateKey)
                     }
                 });
 
@@ -307,7 +307,7 @@ module.exports = function(describe, it) {
                         scope                : "system/*.read",
                         grant_type           : "client_credentials",
                         client_assertion_type: "test-client_assertion_type-value",
-                        client_assertion     : createClientAssertion({}, {}, cfg.privateKey)
+                        client_assertion     : createClientAssertion(cfg.clientId, cfg.tokenEndpoint, cfg.keyid, cfg.privateKey)
                     }
                 });
 
@@ -375,10 +375,7 @@ module.exports = function(describe, it) {
                         scope                : "system/*.read",
                         grant_type           : "client_credentials",
                         client_assertion_type: "urn:ietf:params:oauth:client-assertion-type:jwt-bearer",
-                        client_assertion     : createClientAssertion({
-                            aud: "test-bad-aud-value",
-                            iss: cfg.tokenEndpoint
-                        }, {}, cfg.privateKey)
+                        client_assertion     : createClientAssertion(cfg.clientId, "test-bad-aud-value", cfg.keyid, cfg.privateKey)
                     }
                 });
 
@@ -409,10 +406,7 @@ module.exports = function(describe, it) {
                         scope                : "system/*.read",
                         grant_type           : "client_credentials",
                         client_assertion_type: "urn:ietf:params:oauth:client-assertion-type:jwt-bearer",
-                        client_assertion     : createClientAssertion({
-                            aud: cfg.tokenEndpoint,
-                            iss: "test-iss-value"
-                        }, {}, cfg.privateKey)
+                        client_assertion     : createClientAssertion("test-iss-value", cfg.tokenEndpoint, cfg.keyid, cfg.privateKey)
                     }
                 });
 
@@ -449,11 +443,7 @@ module.exports = function(describe, it) {
                     form: {
                         grant_type           : "client_credentials",
                         client_assertion_type: "urn:ietf:params:oauth:client-assertion-type:jwt-bearer",
-                        client_assertion     : createClientAssertion({
-                            aud: cfg.tokenEndpoint,
-                            iss: "test-bad-client-id",
-                            sub: "test-bad-client-id"
-                        }, {}, cfg.privateKey)
+                        client_assertion     : createClientAssertion("test-bad-client-id", cfg.tokenEndpoint, cfg.keyid, cfg.privateKey)
                     }
                 });
 
@@ -483,11 +473,7 @@ module.exports = function(describe, it) {
                     form: {
                         grant_type           : "client_credentials",
                         client_assertion_type: "urn:ietf:params:oauth:client-assertion-type:jwt-bearer",
-                        client_assertion     : createClientAssertion({
-                            aud: cfg.tokenEndpoint,
-                            iss: cfg.clientId,
-                            sub: cfg.clientId
-                        }, {}, cfg.privateKey)
+                        client_assertion     : createClientAssertion(cfg.clientId, cfg.tokenEndpoint, cfg.keyid, cfg.privateKey)
                     }
                 });
 
@@ -518,11 +504,7 @@ module.exports = function(describe, it) {
                         scope                : "",
                         grant_type           : "client_credentials",
                         client_assertion_type: "urn:ietf:params:oauth:client-assertion-type:jwt-bearer",
-                        client_assertion     : createClientAssertion({
-                            aud: cfg.tokenEndpoint,
-                            iss: cfg.clientId,
-                            sub: cfg.clientId
-                        }, {}, cfg.privateKey)
+                        client_assertion     : createClientAssertion(cfg.clientId, cfg.tokenEndpoint, cfg.keyid, cfg.privateKey)
                     }
                 });
 
@@ -553,11 +535,7 @@ module.exports = function(describe, it) {
                         scope                : "launch fhirUser system/Patient.read",
                         grant_type           : "client_credentials",
                         client_assertion_type: "urn:ietf:params:oauth:client-assertion-type:jwt-bearer",
-                        client_assertion     : createClientAssertion({
-                            aud: cfg.tokenEndpoint,
-                            iss: cfg.clientId,
-                            sub: cfg.clientId
-                        }, {}, cfg.privateKey)
+                        client_assertion     : createClientAssertion(cfg.clientId, cfg.tokenEndpoint, cfg.keyid, cfg.privateKey)
                     }
                 });
 
@@ -596,11 +574,7 @@ module.exports = function(describe, it) {
                         scope                : "system/Patient.*",
                         grant_type           : "client_credentials",
                         client_assertion_type: "urn:ietf:params:oauth:client-assertion-type:jwt-bearer",
-                        client_assertion     : createClientAssertion({
-                            aud: cfg.tokenEndpoint,
-                            iss: cfg.clientId,
-                            sub: cfg.clientId
-                        }, {}, cfg.privateKey)
+                        client_assertion     : createClientAssertion(cfg.clientId, cfg.tokenEndpoint, cfg.keyid, cfg.privateKey)
                     }
                 });
 
@@ -628,11 +602,7 @@ module.exports = function(describe, it) {
                         scope                : "system/Patient.unknownAction",
                         grant_type           : "client_credentials",
                         client_assertion_type: "urn:ietf:params:oauth:client-assertion-type:jwt-bearer",
-                        client_assertion     : createClientAssertion({
-                            aud: cfg.tokenEndpoint,
-                            iss: cfg.clientId,
-                            sub: cfg.clientId
-                        }, {}, cfg.privateKey)
+                        client_assertion     : createClientAssertion(cfg.clientId, cfg.tokenEndpoint, cfg.keyid, cfg.privateKey)
                     }
                 });
 
@@ -670,11 +640,7 @@ module.exports = function(describe, it) {
                         scope                : "system/*.read",
                         grant_type           : "client_credentials",
                         client_assertion_type: "urn:ietf:params:oauth:client-assertion-type:jwt-bearer",
-                        client_assertion     : createClientAssertion({
-                            aud: cfg.tokenEndpoint,
-                            iss: cfg.clientId,
-                            sub: cfg.clientId
-                        }, {}, cfg.privateKey)
+                        client_assertion     : createClientAssertion(cfg.clientId, cfg.tokenEndpoint, cfg.keyid, cfg.privateKey)
                     }
                 });
 
@@ -702,11 +668,7 @@ module.exports = function(describe, it) {
                         scope                : "system/UnknownResource.read",
                         grant_type           : "client_credentials",
                         client_assertion_type: "urn:ietf:params:oauth:client-assertion-type:jwt-bearer",
-                        client_assertion     : createClientAssertion({
-                            aud: cfg.tokenEndpoint,
-                            iss: cfg.clientId,
-                            sub: cfg.clientId
-                        }, {}, cfg.privateKey)
+                        client_assertion     : createClientAssertion(cfg.clientId, cfg.tokenEndpoint, cfg.keyid, cfg.privateKey)
                     }
                 });
 
@@ -748,15 +710,7 @@ module.exports = function(describe, it) {
                         grant_type           : "client_credentials",
                         client_assertion_type: "urn:ietf:params:oauth:client-assertion-type:jwt-bearer",
                         scope                : "system/*.read",
-                        client_assertion     : createClientAssertion({
-                            aud: cfg.tokenEndpoint,
-                            iss: cfg.clientId,
-                            sub: cfg.clientId
-                        }, {
-                            header: {
-                                jku: "test-bad-jku"
-                            }
-                        }, cfg.privateKey)
+                        client_assertion     : createClientAssertion(cfg.clientId, cfg.tokenEndpoint, "test-bad-jku", cfg.privateKey)
                     }
                 });
 
@@ -786,23 +740,7 @@ module.exports = function(describe, it) {
                         grant_type           : "client_credentials",
                         client_assertion_type: "urn:ietf:params:oauth:client-assertion-type:jwt-bearer",
                         scope                : "system/*.read",
-                        client_assertion     : createClientAssertion({
-                            aud: cfg.tokenEndpoint,
-                            iss: cfg.clientId,
-                            sub: cfg.clientId
-                        }, {}, {
-                            "kty": "EC",
-                            "crv": "P-384",
-                            "d"  : "cVT-RW48vfIcBku9ccKpm0mU_gPFT8zj6GeVKMSgo2cAZEtutKv_HdmgwL1mJT0q",
-                            "x"  : "bqzUWQxnyv-O_lsCLS_ciNlspf4SzmYytx7_SmXNUYlGxfEs6HvfeIE2cofS3pBZ",
-                            "y"  : "djY7yFzDoevoxvniLufjbMEBI8tOYjyWH5Spbcm_R8syFIFro89C84Apz_47fAhX",
-                            "key_ops": [
-                                "sign"
-                            ],
-                            "ext": true,
-                            "kid": "cce12207a49fd90a7db42dc7cb9b8621",
-                            "alg": "ES384"
-                        })
+                        client_assertion     : createClientAssertion(cfg.clientId, cfg.tokenEndpoint, cfg.keyid, "dflksjdflkjsdlfjlksdflksdfkljskdfjksdfj")
                     }
                 });
 
@@ -843,15 +781,15 @@ module.exports = function(describe, it) {
                 const privateKey = jwks.keys.find(k => k.key_ops.indexOf("sign") > -1);
                 const publicKey  = jwks.keys.find(k => k.key_ops.indexOf("verify") > -1);
 
-                const token = createClientAssertion({
-                    aud: cfg.tokenEndpoint,
-                    iss: cfg.clientId,
-                    sub: cfg.clientId
-                }, {
-                    header: {
-                        jku: cfg.jwksUrl
-                    }
-                }, privateKey);
+                const token = createClientAssertion(cfg.clientId, cfg.tokenEndpoint, cfg.keyid, cfg.privateKey)
+                /*Need some way to add an additional header
+                                header: {
+                                        jku: cfg.jwksUrl
+                                    }
+                                 */
+
+
+
 
                 const authorizationRequest = authenticate(cfg.tokenEndpoint, {
                     client_assertion: token
@@ -897,16 +835,12 @@ module.exports = function(describe, it) {
                 const privateKey = jwks.keys.find(k => k.key_ops.indexOf("sign") > -1);
                 const publicKey  = jwks.keys.find(k => k.key_ops.indexOf("verify") > -1);
 
-                const token = createClientAssertion({
-                    aud: cfg.tokenEndpoint,
-                    iss: cfg.clientId,
-                    sub: cfg.clientId
-                }, {
-                    header: {
-                        jku: cfg.jwksUrl
-                    }
-                }, privateKey);
-
+                const token = createClientAssertion({}, cfg.privateKey, cfg.keyid);
+                /*Need some way to add an additional header
+                                header: {
+                                        jku: cfg.jwksUrl
+                                    }
+                                 */
                 const authorizationRequest = authenticate(cfg.tokenEndpoint, {
                     client_assertion: token
                 });
@@ -932,6 +866,5 @@ module.exports = function(describe, it) {
                 expectJson(response, "The client should get a JSON response from the authorization request");
             });
         });
-
     });
 };
